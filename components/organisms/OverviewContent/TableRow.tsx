@@ -3,9 +3,9 @@ import NumberFormat from 'react-number-format'
 interface TableRowProps {
   title: string
   category: string
-  item: number
+  item: string
   price: number
-  status: 'pending' | 'success' | 'failed'
+  status: string
   image: string
 }
 

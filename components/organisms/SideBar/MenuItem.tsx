@@ -13,7 +13,7 @@ interface MenuItemProps {
     | 'ic-menu-setting'
   active?: boolean
   href?: string
-  //   onClick?: () => void
+  onClick?: () => void
 }
 
 export default function MenuItem({
@@ -21,16 +21,17 @@ export default function MenuItem({
   icon,
   active,
   href,
+  onClick,
 }: Partial<MenuItemProps>) {
   return (
-    <div className={`item mb-30 ${active ? 'active' : ''}`}>
+    <div className={`item mb-30 ${active ? 'active' : ''}`} onClick={onClick}>
       <div className='me-3'>
         <Image src={`/icon/${icon}.svg`} width={25} height={25} />
       </div>
       <p className='item-title m-0'>
-        <a href={href} className='text-lg text-decoration-none'>
-          {title}
-        </a>
+        <Link href={href!}>
+          <a className='text-lg text-decoration-none'>{title}</a>
+        </Link>
       </p>
     </div>
   )

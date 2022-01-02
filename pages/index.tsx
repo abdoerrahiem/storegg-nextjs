@@ -9,6 +9,9 @@ import FeaturedGame from '../components/organisms/FeaturedGame'
 import Reached from '../components/organisms/Reached'
 import Story from '../components/organisms/Story'
 import Footer from '../components/organisms/Footer'
+import store from '../store'
+import { getFeaturedGame } from '../store/actions'
+import ContentHead from '../components/atoms/ContentHead'
 
 export default function HomePage() {
   useEffect(() => {
@@ -17,24 +20,7 @@ export default function HomePage() {
 
   return (
     <>
-      <Head>
-        <title>StoreGG - Get a New Experience in Gaming</title>
-        <meta
-          name='description'
-          content='Kami menyediakan jutaan cara untuk membantu players menjadi pemenang sejati'
-        />
-        <meta
-          property='og:title'
-          content='StoreGG - Get a New Experience in Gaming'
-        />
-        <meta
-          property='og:description'
-          content='Kami menyediakan jutaan cara untuk membantu players menjadi pemenang sejati'
-        />
-        <meta property='og:image' content='https://imageurlkalian' />
-        <meta property='og:url' content='https://storegg.com' />
-      </Head>
-
+      <ContentHead />
       <Navbar />
       <MainBanner />
       <TransactionStep />
@@ -45,3 +31,9 @@ export default function HomePage() {
     </>
   )
 }
+
+export const getServerSideProps = store.getServerSideProps(
+  ({ dispatch }) => async (): Promise<any> => {
+    await dispatch(getFeaturedGame())
+  }
+)

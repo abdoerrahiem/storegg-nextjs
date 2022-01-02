@@ -14,9 +14,11 @@ import '../styles/transactions.css'
 import '../styles/transactions-detail.css'
 import '../styles/edit-profile.css'
 import '../styles/navbar-log-in.css'
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css'
 
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
+import store from '../store'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -55,4 +57,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   )
 }
 
-export default MyApp
+export default store.withRedux(MyApp)

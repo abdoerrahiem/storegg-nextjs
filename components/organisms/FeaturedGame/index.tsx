@@ -1,6 +1,13 @@
+import { useSelector, RootStateOrAny } from 'react-redux'
+
 import GameItem from '../../molecules/GameItem'
+import { GameItemTypes, IMAGE_API } from '../../../utils'
 
 export default function FeaturedGame() {
+  const { getFeaturedGameSuccess } = useSelector(
+    (state: RootStateOrAny) => state.playerReducer
+  )
+
   return (
     <section className='featured-game pt-50 pb-50'>
       <div className='container-fluid'>
@@ -12,36 +19,15 @@ export default function FeaturedGame() {
           className='d-flex flex-row flex-lg-wrap overflow-setting justify-content-lg-between gap-lg-3 gap-4'
           data-aos='fade-up'
         >
-          <GameItem
-            id='1'
-            title='Super Mechs'
-            category='Mobile'
-            thumbnail='/img/Thumbnail-1.png'
-          />
-          <GameItem
-            id='1'
-            title='Call of Duty: Modern'
-            category='Mobile'
-            thumbnail='/img/Thumbnail-2.png'
-          />
-          <GameItem
-            id='1'
-            title='Mobile Legends'
-            category='Mobile'
-            thumbnail='/img/Thumbnail-3.png'
-          />
-          <GameItem
-            id='1'
-            title='Clash of Clans'
-            category='Mobile'
-            thumbnail='/img/Thumbnail-4.png'
-          />
-          <GameItem
-            id='1'
-            title='Valorant'
-            category='Dekstop'
-            thumbnail='/img/Thumbnail-5.png'
-          />
+          {getFeaturedGameSuccess?.map((item: GameItemTypes) => (
+            <GameItem
+              key={item._id}
+              id={item._id}
+              title={item.name}
+              category={item.category.name}
+              thumbnail={`${IMAGE_API}/${item.thumbnail}`}
+            />
+          ))}
         </div>
       </div>
     </section>

@@ -1,15 +1,34 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import Cookies from 'js-cookie'
+import { useDispatch, useSelector, RootStateOrAny } from 'react-redux'
+
+import { getProfile } from '../../../store/actions'
+import { IMAGE_API } from '../../../utils'
+import { CLEAR_PLAYER_STATE } from '../../../store/types'
 
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true)
-  const [user, setUser] = useState({
-    avatar: '',
-  })
+  const [token] = useState(Cookies.get('token') ?? null)
 
-  const handleLogout = () => {}
+  const { push } = useRouter()
 
-  if (isLogin) {
+  const dispatch = useDispatch()
+  const { getProfileSuccess } = useSelector(
+    (state: RootStateOrAny) => state.playerReducer
+  )
+
+  useEffect(() => {
+    dispatch(getProfile(token!))
+  }, [dispatch])
+
+  const handleLogout = () => {
+    Cookies.remove('token')
+    dispatch({ type: CLEAR_PLAYER_STATE })
+    push('/')
+  }
+
+  if (getProfileSuccess) {
     return (
       <li className='nav-item my-auto dropdown d-flex'>
         <div className='vertical-line d-lg-block d-none' />
@@ -23,8 +42,7 @@ export default function Auth() {
             aria-expanded='false'
           >
             <img
-              //   src={user.avatar}
-              src='/img/avatar-1.png'
+              src={`${IMAGE_API}/${getProfileSuccess.avatar}`}
               className='rounded-circle'
               width='40'
               height='40'
@@ -70,7 +88,7 @@ export default function Auth() {
 
   return (
     <li className='nav-item my-auto'>
-      <Link href='/sign-in'>
+      <Link href='/login'>
         <a
           className='btn btn-sign-in d-flex justify-content-center ms-lg-2 rounded-pill'
           role='button'

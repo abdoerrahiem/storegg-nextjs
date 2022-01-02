@@ -1,7 +1,18 @@
+import { useSelector, RootStateOrAny } from 'react-redux'
+import {
+  HistoryTransactionTypes,
+  IMAGE_API,
+  TopUpCategoriesTypes,
+} from '../../../utils'
+
 import Category from './Category'
 import TableRow from './TableRow'
 
 export default function OverviewContent() {
+  const { getMemberOverviewSuccess } = useSelector(
+    (state: RootStateOrAny) => state.memberReducer
+  )
+
   return (
     <main className='main-wrapper'>
       <div className='ps-lg-0'>
@@ -12,15 +23,17 @@ export default function OverviewContent() {
           </p>
           <div className='main-content'>
             <div className='row'>
-              <Category nominal={18000500} icon='ic-desktop'>
-                Game <br /> Dekstop
-              </Category>
-              <Category nominal={8455000} icon='ic-mobile'>
-                Game <br /> Mobile
-              </Category>
-              <Category nominal={500000} icon='ic-desktop'>
-                Other <br /> Categories
-              </Category>
+              {getMemberOverviewSuccess.count.map(
+                (item: TopUpCategoriesTypes) => (
+                  <Category
+                    key={item._id}
+                    nominal={item.value}
+                    icon='ic-desktop'
+                  >
+                    {item.name}
+                  </Category>
+                )
+              )}
             </div>
           </div>
         </div>
@@ -41,38 +54,19 @@ export default function OverviewContent() {
                 </tr>
               </thead>
               <tbody>
-                <TableRow
-                  image='/img/overview-1.png'
-                  title='Mobile Legend'
-                  category='Mobile'
-                  item={200}
-                  price={290000}
-                  status='pending'
-                />
-                <TableRow
-                  image='/img/overview-2.png'
-                  title='Call of Duty: Modern'
-                  category='Mobile'
-                  item={200}
-                  price={290000}
-                  status='failed'
-                />
-                <TableRow
-                  image='/img/overview-3.png'
-                  title='Clash of Clans'
-                  category='Mobile'
-                  item={200}
-                  price={290000}
-                  status='success'
-                />
-                <TableRow
-                  image='/img/overview-4.png'
-                  title='The Roya Game'
-                  category='Dekstop'
-                  item={200}
-                  price={290000}
-                  status='pending'
-                />
+                {getMemberOverviewSuccess.data.map(
+                  (item: HistoryTransactionTypes) => (
+                    <TableRow
+                      key={item._id}
+                      image={`${IMAGE_API}/${item.historyVoucherTopup.thumbnail}`}
+                      title={item.historyVoucherTopup.gameName}
+                      category={item.historyVoucherTopup.category}
+                      item={`${item.historyVoucherTopup.coinQuantity} ${item.historyVoucherTopup.coinName}`}
+                      price={item.value}
+                      status={item.status}
+                    />
+                  )
+                )}
               </tbody>
             </table>
           </div>

@@ -1,16 +1,26 @@
+import Cookies from 'js-cookie'
 import { useState } from 'react'
 import NumberFormat from 'react-number-format'
+import { useSelector, RootStateOrAny, useDispatch } from 'react-redux'
+import { getMemberTransactions } from '../../../store/actions'
+import { HistoryTransactionTypes, IMAGE_API } from '../../../utils'
+
 import ButtonTab from './ButtonTab'
 import TableRow from './TableRow'
 
 export default function TransactionContent() {
   const [buttons] = useState([
-    { id: 1, title: 'All Trx' },
-    { id: 2, title: 'Success' },
-    { id: 3, title: 'Pending' },
-    { id: 4, title: 'Failed' },
+    { id: 1, title: 'All Trx', query: 'all' },
+    { id: 2, title: 'Success', query: 'success' },
+    { id: 3, title: 'Pending', query: 'pending' },
+    { id: 4, title: 'Failed', query: 'failed' },
   ])
   const [activeButton, setActiveButton] = useState(1)
+
+  const dispatch = useDispatch()
+  const { getMemberTransactionsSuccess } = useSelector(
+    (state: RootStateOrAny) => state.memberReducer
+  )
 
   return (
     <main className='main-wrapper'>
@@ -22,7 +32,7 @@ export default function TransactionContent() {
           <p className='text-lg color-palette-2 mb-12'>You’ve spent</p>
           <h3 className='text-5xl fw-medium color-palette-1'>
             <NumberFormat
-              value={6000000}
+              value={getMemberTransactionsSuccess?.total}
               prefix='Rp. '
               displayType='text'
               thousandSeparator='.'
@@ -38,7 +48,12 @@ export default function TransactionContent() {
                   key={btn.id}
                   active={btn.id === activeButton}
                   title={btn.title}
-                  onClick={() => setActiveButton(btn.id)}
+                  onClick={() => [
+                    setActiveButton(btn.id),
+                    dispatch(
+                      getMemberTransactions(btn.query, Cookies.get('token')!)
+                    ),
+                  ]}
                 />
               ))}
             </div>
@@ -62,42 +77,20 @@ export default function TransactionContent() {
                 </tr>
               </thead>
               <tbody id='list_status_item'>
-                <TableRow
-                  image='/img/overview-1.png'
-                  title='Mobile Legend'
-                  category='Mobile'
-                  item='200 Gold'
-                  price={290000}
-                  status='pending'
-                  id='1'
-                />
-                <TableRow
-                  image='/img/overview-2.png'
-                  title='Call of Duty: Modern'
-                  category='Mobile'
-                  item='200 Gold'
-                  price={290000}
-                  status='failed'
-                  id='1'
-                />
-                <TableRow
-                  image='/img/overview-3.png'
-                  title='Clash of Clans'
-                  category='Mobile'
-                  item='200 Gold'
-                  price={290000}
-                  status='success'
-                  id='1'
-                />
-                <TableRow
-                  image='/img/overview-4.png'
-                  title='The Roya Game'
-                  category='Dekstop'
-                  item='200 Gold'
-                  price={290000}
-                  status='pending'
-                  id='1'
-                />
+                {getMemberTransactionsSuccess?.data.map(
+                  (transaction: HistoryTransactionTypes) => (
+                    <TableRow
+                      key={transaction._id}
+                      image={`${IMAGE_API}/${transaction.historyVoucherTopup.thumbnail}`}
+                      title={transaction.historyVoucherTopup.gameName}
+                      category={transaction.historyVoucherTopup.category}
+                      item={`${transaction.historyVoucherTopup.coinQuantity} ${transaction.historyVoucherTopup.coinName}`}
+                      price={transaction.value}
+                      status={transaction.status}
+                      id={transaction._id}
+                    />
+                  )
+                )}
               </tbody>
             </table>
           </div>

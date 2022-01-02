@@ -55,8 +55,9 @@ export interface CheckoutTypes {
   nominal: string
   payment: string
   bank: string
-  name: string
-  accountUser: string
+  // name: string
+  // accountUser: string
+  token: string
 }
 
 export interface HistoryVoucherTopupTypes {

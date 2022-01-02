@@ -1,9 +1,60 @@
+import { useEffect, useState, ChangeEvent } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import Swal from 'sweetalert2'
+import { useDispatch, useSelector, RootStateOrAny } from 'react-redux'
+
+import { login } from '../../../store/actions'
+import Spinner from '../../atoms/Spinner'
 
 export default function LoginForm() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const { push, query } = useRouter()
+
+  const dispatch = useDispatch()
+  const { loginLoading, loginFail } = useSelector(
+    (state: RootStateOrAny) => state.authReducer
+  )
+  const { getProfileSuccess } = useSelector(
+    (state: RootStateOrAny) => state.playerReducer
+  )
+
+  useEffect(() => {
+    if (loginFail) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: loginFail,
+      })
+    }
+
+    if (getProfileSuccess) {
+      if (query.page) {
+        push(`${query.page}`)
+      } else {
+        push('/')
+      }
+    }
+  }, [loginFail, getProfileSuccess, query.page])
+
+  const handleSubmit = (e: ChangeEvent<any>) => {
+    e.preventDefault()
+
+    if (!email || !password)
+      return Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Data not complete',
+      })
+
+    dispatch(login({ email, password }))
+  }
+
   return (
-    <form action=''>
+    <form onSubmit={handleSubmit}>
       <div className='container mx-auto'>
         <div className='pb-50'>
           <Link href='/'>
@@ -30,6 +81,8 @@ export default function LoginForm() {
             name='email'
             aria-describedby='email'
             placeholder='Enter your email address'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div className='pt-30'>
@@ -46,26 +99,27 @@ export default function LoginForm() {
             name='password'
             aria-describedby='password'
             placeholder='Your password'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
         <div className='button-group d-flex flex-column mx-auto pt-50'>
-          <a
+          <button
             className='btn btn-sign-in fw-medium text-lg text-white rounded-pill mb-16'
-            href='../index.html'
-            role='button'
+            type='submit'
+            disabled={loginLoading}
           >
-            Continue to Sign In
-          </a>
-          {/* <button type="submit"
-                          className="btn btn-sign-in fw-medium text-lg text-white rounded-pill mb-16"
-                          role="button">Continue to Sign In</button>  */}
-          <a
-            className='btn btn-sign-up fw-medium text-lg color-palette-1 rounded-pill'
-            href='/register'
-            role='button'
-          >
-            Sign Up
-          </a>
+            {loginLoading ? <Spinner /> : 'Continue to Sign In'}
+          </button>
+
+          <Link href='/register'>
+            <a
+              className='btn btn-sign-up fw-medium text-lg color-palette-1 rounded-pill'
+              role='button'
+            >
+              Sign Up
+            </a>
+          </Link>
         </div>
       </div>
     </form>
