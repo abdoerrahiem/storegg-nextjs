@@ -19,12 +19,7 @@ export default function GameItem({
       <Link href={`/details/${id}`}>
         <a>
           <div className='blur-sharp'>
-            <Image
-              className='thumbnail'
-              src={thumbnail}
-              width={205}
-              height={270}
-            />
+            <img src={thumbnail} alt='' className='thumbnail' />
           </div>
           <div className='cover position-absolute bottom-0 m-32'>
             <div className='d-flex flex-column h-100 justify-content-between text-decoration-none'>

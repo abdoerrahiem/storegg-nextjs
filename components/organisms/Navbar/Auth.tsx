@@ -28,6 +28,8 @@ export default function Auth() {
     push('/')
   }
 
+  console.log(getProfileSuccess)
+
   if (getProfileSuccess) {
     return (
       <li className='nav-item my-auto dropdown d-flex'>
@@ -76,9 +78,12 @@ export default function Auth() {
               </Link>
             </li>
             <li onClick={handleLogout}>
-              <a className='dropdown-item text-lg color-palette-2' href='#'>
+              <Link href='/'>
+              <a className='dropdown-item text-lg color-palette-2' >
                 Log Out
               </a>
+              
+              </Link>
             </li>
           </ul>
         </div>
